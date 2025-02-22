@@ -6,8 +6,23 @@
     "install-all": "pnpm i && cd server && pnpm i && cd ../client && pnpm i && cd ../"
   },
   "devDependencies": {
+    "@types/body-parser": "^1.19.5",
+    "@types/cors": "^2.8.17",
+    "@types/node": "^22.13.4",
+    "@types/uuid": "^10.0.0",
+    "@types/xml2js": "^0.4.14",
+    "@types/xmlbuilder": "^0.0.35",
     "only-allow": "^1.2.1",
     "pnpm": "^9.12.1",
     "prettier": "^3.3.3"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "uuid": "^11.0.5",
+    "xml2js": "^0.6.2",
+    "xmlbuilder": "^15.1.1"
   }
 }
