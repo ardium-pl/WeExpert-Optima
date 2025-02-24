@@ -1,23 +1,30 @@
-// Typ do przechowywania danych z CDATA
 export type CDATA<T> = {
-    value: T; // Wartość użytkownika
-    toXML: () => string; // Funkcja konwertująca na CDATA w XML
-};
-
-// Tworzenie obiektów CDATA
-export function createCDATA<T>(value: T): CDATA<T> {
+    [x: string]: any;
+    _cdata: T;
+  };
+  
+  export function createCDATA<T>(value: T): CDATA<T> {
     return {
-        value,
-        toXML: () => `<![CDATA[${value}]]>`,
+      _cdata: value,
     };
-}
+  }
+  
+  
 
 // Główna struktura: PracownicyExt
 export type PRACOWNICY_EXT = {
-    WERSJA: string;
-    BAZA_ZRD_ID: string;
-    BAZA_DOC_ID: string;
-    PRACOWNIK: PRACOWNIK[]; // Tablica obiektów typu Pracownik
+    ROOT:{
+        _attributes:{
+            xmlns: string
+        };
+        PRACOWNICY_EXT: {
+            WERSJA: string;
+            BAZA_ZRD_ID: string;
+            BAZA_DOC_ID: string;
+            PRACOWNIK: PRACOWNIK[]; // Tablica obiektów typu Pracownik
+        }
+    };
+
 };
 
 // Struktura dla PRACOWNIK
@@ -27,7 +34,7 @@ export type PRACOWNIK = {
     PRA_ARCHIWALNY: "Tak" | "Nie";
     PRA_NADRZEDNY: "Tak" | "Nie";
     PRACOWNIK_EXT_ETATY: PracownikExtEtaty;
-    UMOWY: Umowy;
+    UMOWY: Partial<Umowy>;
     PRACOWNIK_EXT_IDX_GROUP: PracownikExtIdxGroup;
 };
 
@@ -57,8 +64,8 @@ export type PracownikExtEtat = {
     PRE_MLD_KOD_KRAJU?: CDATA<string>;
     PRE_MLD_WOJEWODZTWO?: CDATA<string>;
     PRE_MLD_POWIAT?: CDATA<string>;
-    PRE_MLD_GMINA?: number;
-    PRE_MLD_KOD_GMINY?: CDATA<number>;
+    PRE_MLD_GMINA?: CDATA<string>;
+    PRE_MLD_KOD_GMINY?: number;
     PRE_MLD_MIASTO?: CDATA<string>;
     PRE_MLD_ULICA?: CDATA<string>;
     PRE_MLD_NR_DOMU?: CDATA<string>;
@@ -114,7 +121,7 @@ export type PracownikExtEtat = {
     PRE_STAN_CYWILNY?: CDATA<string>;
     PRE_NR_W_AKTACH?: CDATA<string>;
     PRE_KARTA_POBYTU_CUDZOZ?: CDATA<string>;
-    PROGI?: string; // Puste w XML
+    PROGI?: CDATA<string>; // Puste w XML
     PRE_KOSZTY_MNOZNIK?: number;
     PRE_KOSZTY_TYTUL?: number;
     PRE_ULGA_MNOZNIK?: number;
@@ -127,7 +134,7 @@ export type PracownikExtEtat = {
     PRE_ZAGRANICZNY_NR_IDENTYF_PIT?: CDATA<string>;
     PRE_DATA_ZATRUDNIENIA?: CDATA<string>;
     PRE_DATA_ZWOLNIENIA?: CDATA<string>;
-    PRE_ETAT_STOSUNEK_PRACY?: CDATA<number>;
+    PRE_ETAT_STOSUNEK_PRACY?: number;
     PRE_ETAT_DATA_ZAWARCIA_UMOWY?: CDATA<string>;
     PRE_ETAT_DATA_ROZPOCZECIA_PRACY?: CDATA<string>;
     PRE_ETAT_RODZAJ_UMOWY?: CDATA<string>;
@@ -142,7 +149,7 @@ export type PracownikExtEtat = {
     PRE_STAWKA_ZASZEREGOWANIA_MINIMALNA?: "Tak" | "Nie";
     PRE_LIMIT_URLOPU_PIERWSZA_PRACA?: "Tak" | "Nie";
     PRE_GWARANTOWANY_PROC_MINIMALNEJ?: number;
-    PRE_NORMA_DOBOWA_DO_URLOPU?: string;
+    PRE_NORMA_DOBOWA_DO_URLOPU?: CDATA<string>;
     PRE_LICZBA_DNI_DODATK_LIMITU_URL?: number;
     PRE_ODDELEGOWANY_ZA_GRANICE?: "Tak" | "Nie";
     PRE_ODDELEGOWANY_ZUS_W_POLSCE?: "Tak" | "Nie";
@@ -241,12 +248,11 @@ export type PracownikExtEtat = {
 };
 
 export type Umowy = {
-    UMOWA: Umowa[]; // Tablica elementów UMOWA
+    UMOWA: Partial<Umowa>[]; // Tablica elementów UMOWA
 };
 
-const umowa: Partial<Umowa> = {
-    UMW_DATA_OD: createCDATA("gowno"),
-}; // main.ts xmlprecessor te pliki mnie interesuję
+
+// main.ts xmlprecessor te pliki mnie interesuję
 // Struktura dla UMOWA
 export type Umowa = {
     UMW_IRID: CDATA<string>;
@@ -265,7 +271,7 @@ export type Umowa = {
     UMW_DATA_DO: CDATA<string>;
     UMW_DATA_ZAWARCIA: CDATA<string>;
     UMW_TYTUL: CDATA<string>;
-    UMW_WARTOSC: CDATA<string>;
+    UMW_WARTOSC: CDATA<string> | undefined;
     UMW_RODZAJ: CDATA<string>;
     UMW_SPLACONO: number;
     UMW_WALUTA: CDATA<string>;

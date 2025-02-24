@@ -16,14 +16,14 @@ const PORT = process.env.PORT ?? 8080;
 app.use(cors());
 app.use(bodyParser.json());
 export interface RequestData {
-    $?: {
-    lastName?: CDATA<string>;
-    name?: CDATA<string>
-    hourlyRate?: number;
-    date?: Date;
-    }
-    irid?: string;
-}; // nie wiem czy to jest w dobrym miejscu
+        surname: string; // Pole z PracownikExtEtat
+        name: string; // Pole z PracownikExtEtat
+        pesel?: string; // Pole z PracownikExtEtat
+        salary?: number; // Pole z Umowa
+        title?: string; // Pole z Umowa
+        hourlyRate?: number; // Dodatkowe własne pole
+        date: Date; // Dodatkowe własne pole
+}; // nie wiem czy to jest w dobrym miejscu                    
 
 app.post('/api/generate', (req: Request<{}, {}, RequestData[]>, res: Response) => {
     try {
