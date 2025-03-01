@@ -31,14 +31,14 @@ export class XmlService {
           BAZA_DOC_ID: 'WYMIANA_DANYCH',
           PRACOWNIK: [
             {
-              PRA_IRID: createCDATA(this._generateIRID()), // Generowanie IRID dla pracownika
+              PRA_IRID: createCDATA(this._generateIRID()), 
               PRA_KOD: createCDATA('IMP10'),
               PRA_ARCHIWALNY: 'Nie',
               PRA_NADRZEDNY: 'Nie',
               PRACOWNIK_EXT_ETATY: {
                 PRACOWNIK_EXT_ETAT: [
                   {
-                    PRE_IRID: createCDATA(this._generateIRID()), // IRID dla etatu
+                    PRE_IRID: createCDATA(this._generateIRID()),
                     PRE_DATA_OD: createCDATA('1900-01-01'),
                     PRE_DATA_DO: createCDATA('2999-12-31'),
                     PRE_KAL_IRID: createCDATA("B88A311C-E650-413E-BFF9-5A40C54E21D1"),
@@ -65,7 +65,7 @@ export class XmlService {
                     UMW_DDF_SYMBOL: createCDATA('UMW'),
                     UMW_TWP_IRID: createCDATA("49CC4337-27B9-4618-83EF-4679F26D6DF6"),
                     UMW_TWP_IRID2: createCDATA("95C5217A-DFF4-461F-9255-649A17D2CD0C"),
-                    UMW_TWP_NAZWA: createCDATA('PIT-8B 6.Umowa o dzieło 20%'),
+                    UMW_TWP_NAZWA: createCDATA(contractData.title),
                     UMW_TYU_ID: 99999,
                     UMW_DATA_DOK: createCDATA('2025-01-18'),
                     UMW_DATA_OD: createCDATA(contractData.beginningOfContract),

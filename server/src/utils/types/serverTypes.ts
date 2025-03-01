@@ -1,17 +1,20 @@
+// FLASK RESPONSE TYPES
 type SuccessFlaskResponse = {
   status: 'success';
   message: string;
   filePath: string;
 };
 
-type ErrorCode = 'XML_ERR';
+type FlaskErrorCodes = 'XML_ERR';
 
 type ErrorFlaskResponse = {
   status: 'error';
   error: string;
-  errorCode: ErrorCode;
+  errorCode: FlaskErrorCodes;
 };
+export type FlaskResponse = SuccessFlaskResponse | ErrorFlaskResponse;
 
+// REQUEST EXPRESS DATA TYPES
 type PersonalData = {
   lastName: string;
   name: string;
@@ -34,4 +37,18 @@ export type RequestExpressData = {
   contractData: ContractData;
 };
 
-export type FlaskResponse = SuccessFlaskResponse | ErrorFlaskResponse;
+// RESPONSE EXPRESS DATA TYPES
+type SuccessExpressResponse = {
+  status: 'success';
+  message: string;
+};
+
+type ExpressErrorCodes = 'XML_ERR' | 'OPTIMA_ERR';
+
+type ErrorExpressResponse = {
+  status: 'error';
+  error: string;
+  errorCode: ExpressErrorCodes;
+};
+
+export type ExpressResponse = SuccessExpressResponse | ErrorExpressResponse;

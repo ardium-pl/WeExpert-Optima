@@ -73,7 +73,7 @@ export class ContractSql {
         }
     }
 
-    // Metoda sprawdzająca, czy dokument istnieje w tabeli TypWypłata
+    
     public async extractUmwTwpIrid(
         contractType: string
     ): Promise< ImportRowId | null> {
