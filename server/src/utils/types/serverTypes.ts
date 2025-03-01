@@ -10,6 +10,8 @@ type FlaskErrorCodes = 'XML_ERR';
 type ErrorFlaskResponse = {
   status: 'error';
   error: string;
+  details: string;
+  downloadLink: string;
   errorCode: FlaskErrorCodes;
 };
 export type FlaskResponse = SuccessFlaskResponse | ErrorFlaskResponse;
@@ -49,6 +51,8 @@ type ErrorExpressResponse = {
   status: 'error';
   error: string;
   errorCode: ExpressErrorCodes;
+  downloadLink?: string;
+  details?: string;
 };
 
 export type ExpressResponse = SuccessExpressResponse | ErrorExpressResponse;
