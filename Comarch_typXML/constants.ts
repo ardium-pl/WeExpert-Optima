@@ -1,4 +1,4 @@
-import path from "path";
+import * as path from 'path';
 
-const dataFolder = "./data"; 
-export const xmlFilesFolder = path.join(dataFolder, "xml-files");
+// 🔥 Zawsze ustawiamy pełną, absolutną ścieżkę!
+export const xmlFilesFolder: string = path.resolve(__dirname, "../generatedXML");

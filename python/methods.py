@@ -6,7 +6,7 @@ class Machine:
         """Wyszukuje i wypisuje wszystkie przyciski w podanym oknie aplikacji."""
         buttons = window.descendants(control_type="Button")
 
-        print("\n📋 Znalezione przyciski:")
+        print(" Znalezione przyciski:")
         for btn in buttons:
             print(f"- {btn.window_text()}")
 
@@ -20,10 +20,10 @@ class Machine:
         for btn in buttons:
             if button_name in btn.window_text():
                 btn.click()
-                print(f"✅ Kliknięto przycisk '{button_name}'!")
+                print(f" Kliknięto przycisk '{button_name}'!")
                 return True  
         
-        print(f"❌ Nie znaleziono przycisku '{button_name}'.")
+        print(f" Nie znaleziono przycisku '{button_name}'.")
         return False  
     
     @staticmethod
@@ -34,10 +34,10 @@ class Machine:
         for btn in buttons:
             if button_name in btn.window_text():
                 btn.click_input()
-                print(f"✅ Kliknięto przycisk '{button_name}'!")
+                print(f" Kliknięto przycisk '{button_name}'!")
                 return True  
         
-        print(f"❌ Nie znaleziono przycisku '{button_name}'.")
+        print(f" Nie znaleziono przycisku '{button_name}'.")
         return False  
     
     @staticmethod
@@ -46,11 +46,11 @@ class Machine:
         tab_items = window.descendants(control_type="TabItem")  
 
         if tab_items:
-            print("\n📂 Znalezione zakładki:")
+            print(" Znalezione zakładki:")
             for tab in tab_items:
                 print(f"- {tab.window_text()}")
         else:
-            print("❌ Nie znaleziono żadnych zakładek w aplikacji.")
+            print(" Nie znaleziono żadnych zakładek w aplikacji.")
     
     @staticmethod
     def click_tab(window: str, tab_name: str):
@@ -59,11 +59,11 @@ class Machine:
 
         for tab in tab_items:
             if tab_name in tab.window_text():
-                print(f"🖱 Klikam w zakładkę: {tab.window_text()}")
+                print(f" Klikam w zakładkę: {tab.window_text()}")
                 tab.select()
                 return True  
 
-        print(f"❌ Nie znaleziono zakładki: {tab_name}")
+        print(f" Nie znaleziono zakładki: {tab_name}")
         return False 
 
     @staticmethod
@@ -94,13 +94,13 @@ class Machine:
                 from pywinauto import Desktop  # Musisz mieć zainstalowane pywinauto
                 element = Desktop(backend="uia").from_point(x, y)
                 if element:
-                    print("🎯 Znaleziono element!")
-                    print("🔹 Text:", element.window_text())
-                    print("🔹 Automation ID:", getattr(element, "automation_id", "Brak ID"))
-                    print("🔹 Control Type:", element.get_properties().get("control_type", "Nieznany"))
-                    print("🔹 Bounding Rectangle:", element.rectangle())
+                    print(" Znaleziono element!")
+                    print(" Text:", element.window_text())
+                    print(" Automation ID:", getattr(element, "automation_id", "Brak ID"))
+                    print(" Control Type:", element.get_properties().get("control_type", "Nieznany"))
+                    print(" Bounding Rectangle:", element.rectangle())
                 else:
-                    print("❌ Brak elementu w tym miejscu.")
+                    print(" Brak elementu w tym miejscu.")
             except Exception as e:
-                print("⚠️ Błąd przy wykrywaniu elementu:", e)
+                print(" Błąd przy wykrywaniu elementu:", e)
 

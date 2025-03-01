@@ -267,11 +267,11 @@ export type Umowa = {
     UMW_NUMER_STRING: CDATA<string>;
     UMW_NUMER_NR: number;
     UMW_DATA_DOK: CDATA<string>;
-    UMW_DATA_OD: CDATA<string>;
-    UMW_DATA_DO: CDATA<string>;
-    UMW_DATA_ZAWARCIA: CDATA<string>;
+    UMW_DATA_OD: CDATA<Date>;
+    UMW_DATA_DO: CDATA<Date>;
+    UMW_DATA_ZAWARCIA: CDATA<Date>;
     UMW_TYTUL: CDATA<string>;
-    UMW_WARTOSC: CDATA<string> | undefined;
+    UMW_WARTOSC: CDATA<string>;
     UMW_RODZAJ: CDATA<string>;
     UMW_SPLACONO: number;
     UMW_WALUTA: CDATA<string>;
