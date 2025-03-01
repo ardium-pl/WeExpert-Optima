@@ -1,63 +1,64 @@
+import asyncio
 import os
-import subprocess
-from watchdog.observers import Observer
-from watchdog.events import FileSystemEventHandler
-import time
+import chardet
 
-class XMLFileHandler(FileSystemEventHandler):
+async def robotLaunch(file_path, force_encoding=None):
     """
-    Klasa nasłuchująca na zmiany w folderze i obsługująca pliki XML.
-    """
-    def on_created(self, event):
-        if event.is_directory:
-            return
-        if event.src_path.endswith('.xml'):
-            print(f" Nowy plik XML wykryty: {event.src_path}")
-            process_xml_file(event.src_path)
-
-
-def process_xml_file(file_path):
-    """
-    Funkcja do przetwarzania pliku XML i uruchomienia skryptu Optima z innego folderu.
+    Asynchroniczna funkcja do przetwarzania pliku XML i uruchomienia skryptu Optima.
     """
     try:
-        with open(file_path, 'r', encoding='utf-8') as file:
-            data = file.read()
-        print(f" Przetwarzanie pliku XML: {file_path}")
+        if not os.path.exists(file_path):
+            raise FileNotFoundError(f"Plik {file_path} nie istnieje!")
 
-        # Ścieżka do folderu robocika
-        robocik_path = r"C:\praca_Ardium\WeExpert-Optima\python\robocik_optima.py"  # Zmień na właściwą ścieżkę
+        print(f"Przetwarzanie pliku XML: {file_path}")
 
-        # Sprawdzenie, czy ścieżka jest poprawna
+        # Ścieżka do skryptu robota Optima
+        robocik_path = r"C:\praca_Ardium\WeExpert-Optima\python\robocik_optima.py"
+
         if not os.path.exists(robocik_path):
-            raise FileNotFoundError(f" Plik {robocik_path} nie istnieje!")
+            raise FileNotFoundError(f"Skrypt {robocik_path} nie istnieje!")
 
-        # Uruchomienie skryptu robota Optima
-        print("🤖 Uruchamiam skrypt robocik_optima.py")
-        result = subprocess.run(["python", robocik_path], capture_output=True, text=True)
+        print("Uruchamiam asynchronicznie skrypt robocik_optima.py")
 
-        # Wyświetlenie wyniku działania skryptu
-        if result.returncode == 0:
-            print(f" Skrypt zakończył się sukcesem:\n{result.stdout}")
+        # Uruchamiamy skrypt robota jako proces asynchroniczny
+        process = await asyncio.create_subprocess_exec(
+            "python", robocik_path, file_path,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE
+        )
+
+        # Czekamy na zakończenie procesu i zbieramy wynik
+        stdout, stderr = await process.communicate()
+
+        # Wybieramy kodowanie: automatyczne wykrywanie lub ustawione ręcznie
+        if force_encoding:
+            encoding = force_encoding
         else:
-            print(f" Błąd podczas działania skryptu:\n{result.stderr}")
+            encoding = chardet.detect(stdout)["encoding"] or "utf-8"
+
+        try:
+            output = stdout.decode(encoding, errors="replace").strip()
+        except Exception:
+            output = "[Błąd dekodowania stdout]"
+
+        if force_encoding:
+            encoding_err = force_encoding
+        else:
+            encoding_err = chardet.detect(stderr)["encoding"] or "utf-8"
+
+        try:
+            error_output = stderr.decode(encoding_err, errors="replace").strip()
+        except Exception:
+            error_output = "[Błąd dekodowania stderr]"
+
+        # Obsługa wyników procesu
+        if process.returncode == 0:
+            print(f"Skrypt zakończył się sukcesem:\n{output}")
+            return {"status": "success", "stdout": output, "stderr": ""}
+        else:
+            print(f"Błąd podczas działania skryptu:\n{error_output}")
+            raise RuntimeError(f"Błąd wykonania robocika: {error_output}")
 
     except Exception as e:
-        print(f" Błąd podczas przetwarzania pliku: {e}")
-
-def start_watching(folder_path):
-    """
-    Funkcja uruchamiająca monitorowanie folderu.
-    """
-    event_handler = XMLFileHandler()
-    observer = Observer()
-    observer.schedule(event_handler, path=folder_path, recursive=False)
-    observer.start()
-    print(f" Monitoring folderu '{folder_path}' rozpoczęty...")
-
-    try:
-        while True:
-            time.sleep(1)
-    except KeyboardInterrupt:
-        observer.stop()
-    observer.join()
+        print(f"Błąd w robotLaunch: {e}")
+        raise

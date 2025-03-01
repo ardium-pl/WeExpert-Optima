@@ -13,29 +13,31 @@ xmlRouter.post('/api/process-xml', async (req: Request<{}, {}, RequestExpressDat
     const xmlString = new XmlService().convertDataToXmlString(processedXmlData);
     logger.info('XmlString ', xmlString);
 
-    try {
-      const response = await axios.post<FlaskResponse>(`http://localhost:5000/upload-xml`, {
-        xmlString,
-      });
+    const response = await axios.post<FlaskResponse>(`http://localhost:5000/upload-xml`, {
+      xmlString,
+    });
 
-      const flaskResponse = response.data;
-
-      if (flaskResponse.status === 'error') {
-        return res
-          .status(501)
-          .json({ status: 'error', error: flaskResponse.error, downloadLink: flaskResponse.downloadLink, details: flaskResponse.details, errorCode: 'OPTIMA_ERR' });
-      }
-
-      return res.status(200).json({
-        status: 'success',
-        message: 'XML generated and added to Optima successfully!'
-      });
-    } catch (error) {
-      logger.error('There was an error sending message');
+    const flaskResponse = response.data;
+    if(flaskResponse.status === 'success')
+    return res.status(200).json({
+      status: 'success',
+      message: flaskResponse.message
+    });
+  } catch (error: any) {
+    const errorResponse: FlaskResponse = error.response?.data;
+    if (errorResponse.status === 'error') {
+      return res
+        .status(501)
+        .json({
+          status: 'error',
+          error: errorResponse.error,
+          downloadLink: errorResponse.downloadLink,
+          details: errorResponse.details,
+          errorCode: errorResponse.errorCode,
+        });
     }
-  } catch (error) {
     console.error('Error generating XML:', error);
-    return res.status(500).json({ status: 'error', error: 'Internal server error', errorCode: 'XML_ERR' });
+    return res.status(500).json({ status: 'error', error: 'Internal server error', errorCode: 'FLASK_ERR' });
   }
 });
 

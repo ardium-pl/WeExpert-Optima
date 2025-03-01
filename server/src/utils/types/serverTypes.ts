@@ -5,14 +5,14 @@ type SuccessFlaskResponse = {
   filePath: string;
 };
 
-type FlaskErrorCodes = 'XML_ERR';
+type ErrorCodes = 'OPTIMA_ERR' | 'FLASK_ERR';
 
 type ErrorFlaskResponse = {
   status: 'error';
   error: string;
   details: string;
   downloadLink: string;
-  errorCode: FlaskErrorCodes;
+  errorCode: ErrorCodes;
 };
 export type FlaskResponse = SuccessFlaskResponse | ErrorFlaskResponse;
 
@@ -45,12 +45,10 @@ type SuccessExpressResponse = {
   message: string;
 };
 
-type ExpressErrorCodes = 'XML_ERR' | 'OPTIMA_ERR';
-
 type ErrorExpressResponse = {
   status: 'error';
   error: string;
-  errorCode: ExpressErrorCodes;
+  errorCode: ErrorCodes;
   downloadLink?: string;
   details?: string;
 };
