@@ -23,7 +23,7 @@ xmlRouter.post('/api/process-xml', async (req: Request<{}, {}, RequestExpressDat
       if (flaskResponse.status === 'error') {
         return res
           .status(501)
-          .json({ status: 'error', error: flaskResponse.error, errorCode: flaskResponse.errorCode });
+          .json({ status: 'error', error: flaskResponse.error, downloadLink: flaskResponse.downloadLink, details: flaskResponse.details, errorCode: 'OPTIMA_ERR' });
       }
 
       return res.status(200).json({
