@@ -1,4 +1,3 @@
-```markdown
 # XML Processing API Documentation
 
 This API endpoint processes provided data by converting it into an XML format and then sending the resulting XML to a Flask service. It uses schema validation with Zod to ensure that the incoming request meets the required structure.
