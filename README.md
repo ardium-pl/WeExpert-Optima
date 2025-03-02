@@ -19,19 +19,7 @@ In development or local environments, the base URL might differ.
 **HTTP Method:** `POST`
 
 **Description:**  
-This endpoint accepts JSON data, validates it against a defined schema, converts it into an XML object/string using the `XmlService`, and forwards the XML data to a Flask service. The Flask service URL is dynamically determined by the `NODE_ENV` variable using the following configuration:
-
-```javascript
-const config: Record<string, string> = {
-  local: "http://localhost:5000",
-  development: "https://your-development-url.com",
-  production: "https://your-production-url.com",
-};
-
-if (!NODE_ENV) throw new Error("NODE_ENV is not set, please check this variable");
-
-export const flaskUrl = config[NODE_ENV];
-```
+This endpoint accepts JSON data, validates it against a defined schema, converts it into an XML object/string using the `XmlService`, and forwards the XML data to a Flask service.
 
 The router sends the XML data via a POST request to the Flask endpoint at:  
 `{flaskUrl}/upload-xml`
@@ -60,7 +48,7 @@ The request body must be a JSON object containing two main sections: `personalDa
   },
   "contractData": {
     "title": "string",
-    "hourlyRate": 0,
+    "hourlyRate": "number",
     "date": "YYYY-MM-DD",
     "dateOfSign": "YYYY-MM-DD",
     "beginningOfContract": "YYYY-MM-DD",
@@ -103,8 +91,7 @@ The request body must be a JSON object containing two main sections: `personalDa
 
 ### Forwarding XML Data
 - The resulting XML string is sent in a POST request to the Flask service endpoint at:
-  - `${flaskUrl}/upload-xml`  
-  The `flaskUrl` value is determined based on the `NODE_ENV` environment variable.
+  - `${flaskUrl}/upload-xml`
 
 ### Handling Flask Response
 - **Success:** If the Flask service returns a success response, the API responds with a **200 OK** status and a success message.
