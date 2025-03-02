@@ -1,4 +1,5 @@
 import { XmlService } from '@server/services/xml/xmlService';
+import { flaskUrl } from '@server/utils/config';
 import axios from 'axios';
 import express, { Request, Response, Router } from 'express';
 import {
@@ -7,7 +8,6 @@ import {
     RequestExpressData,
     RequestExpressDataSchema,
 } from '../utils/types/serverTypes';
-import { flaskUrl } from '@server/utils/config';
 
 const xmlRouter: Router = express.Router();
 

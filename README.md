@@ -6,8 +6,10 @@ This API endpoint processes provided data by converting it into an XML format an
 
 ## Base URL
 
-The server is expected to run on a configurable port (default: `8080`).  
-Example: `http://localhost:8080`
+The production endpoint for processing XML is:  
+`https://weexpert-optima-production.up.railway.app/api/process-xml`
+
+In development or local environments, the base URL might differ.
 
 ---
 
@@ -17,7 +19,22 @@ Example: `http://localhost:8080`
 **HTTP Method:** `POST`
 
 **Description:**  
-This endpoint accepts JSON data, validates it against a defined schema, converts it into an XML object/string using the `XmlService`, and forwards the XML data to a Flask service running on `http://localhost:5000/upload-xml`.
+This endpoint accepts JSON data, validates it against a defined schema, converts it into an XML object/string using the `XmlService`, and forwards the XML data to a Flask service. The Flask service URL is dynamically determined by the `NODE_ENV` variable using the following configuration:
+
+```javascript
+const config: Record<string, string> = {
+  local: "http://localhost:5000",
+  development: "https://your-development-url.com",
+  production: "https://your-production-url.com",
+};
+
+if (!NODE_ENV) throw new Error("NODE_ENV is not set, please check this variable");
+
+export const flaskUrl = config[NODE_ENV];
+```
+
+The router sends the XML data via a POST request to the Flask endpoint at:  
+`{flaskUrl}/upload-xml`
 
 ---
 
@@ -36,59 +53,65 @@ The request body must be a JSON object containing two main sections: `personalDa
 ```json
 {
   "personalData": {
-    "lastName": "string",         
-    "name": "string",             
-    "pesel": "string",            
-    "salary": "string"            
+    "lastName": "string",
+    "name": "string",
+    "pesel": "string",
+    "salary": "string"
   },
   "contractData": {
-    "title": "string",            
-    "hourlyRate": 0,              
-    "date": "string",             
-    "dateOfSign": "string",       
-    "beginningOfContract": "string", 
-    "endOfContract": "string",    
-    "typeOfContract": "string"    
+    "title": "string",
+    "hourlyRate": 0,
+    "date": "YYYY-MM-DD",
+    "dateOfSign": "YYYY-MM-DD",
+    "beginningOfContract": "YYYY-MM-DD",
+    "endOfContract": "YYYY-MM-DD",
+    "typeOfContract": "string"
   }
 }
 ```
 
 **Field Details:**
 
-- **personalData**
-  - **lastName**: A required string.
-  - **name**: A required string.
-  - **pesel**: An optional string.
-  - **salary**: A required string.
+### personalData
+- **lastName**: A required string.
+- **name**: A required string.
+- **pesel**: An optional string.
+- **salary**: A required string.
 
-- **contractData**
-  - **title**: A required string.
-  - **hourlyRate**: An optional number.
-  - **date**: A required string (format is not explicitly enforced, so use a standard date format if needed).
-  - **dateOfSign**: A required string.
-  - **beginningOfContract**: A required string.
-  - **endOfContract**: A required string.
-  - **typeOfContract**: A required string.
+### contractData
+- **title**: A required string.
+- **hourlyRate**: An optional number.
+- **date**: A required string in the format `YYYY-MM-DD`.
+- **dateOfSign**: A required string in the format `YYYY-MM-DD`.
+- **beginningOfContract**: A required string in the format `YYYY-MM-DD`.
+- **endOfContract**: A required string in the format `YYYY-MM-DD`.
+- **typeOfContract**: A required string.
 
 ---
 
 ## Processing Workflow
 
-1. **Validation:**  
-   The incoming request data is validated using the `RequestExpressDataSchema` from Zod.  
-   - If validation fails, the API returns a **400 Bad Request** response with details on the validation issues.
+### Validation
+- The incoming request data is validated using the `RequestExpressDataSchema` from Zod.
+- If validation fails, the API returns a **400 Bad Request** response with details on the validation issues.
+- **Note:** All date fields must adhere to the `YYYY-MM-DD` format.
 
-2. **XML Conversion:**  
-   If the validation succeeds, the data is processed:
-   - An XML object is created using `XmlService().processDataToXmlObject()`.
-   - The XML object is converted to an XML string using `XmlService().convertDataToXmlString()`.
+### XML Conversion
+- If validation succeeds, the data is processed as follows:
+  - An XML object is created using `XmlService().processDataToXmlObject()`.
+  - The XML object is converted to an XML string using `XmlService().convertDataToXmlString()`.
 
-3. **Forwarding XML Data:**  
-   The resulting XML string is sent in a POST request to the Flask service endpoint at `http://localhost:5000/upload-xml`.
+### Forwarding XML Data
+- The resulting XML string is sent in a POST request to the Flask service endpoint at:
+  - `${flaskUrl}/upload-xml`  
+  The `flaskUrl` value is determined based on the `NODE_ENV` environment variable.
 
-4. **Handling Flask Response:**  
-   - If the Flask service returns a success response, the API responds with a **200 OK** status and a success message.
-   - If the Flask service returns an error or if an exception occurs during the process, appropriate error responses are returned.
+### Handling Flask Response
+- **Success:** If the Flask service returns a success response, the API responds with a **200 OK** status and a success message.
+- **Error:**  
+  - If the Flask service returns an error response, the API forwards this error with a **501 Not Implemented** status.
+  - If a connection error occurs with the Flask service, the API responds with a **500 Internal Server Error** indicating a Flask connection issue.
+  - Any unexpected errors in processing result in a **500 Internal Server Error** with an error code `"EXPRESS_ERR"`.
 
 ---
 
@@ -109,8 +132,6 @@ The request body must be a JSON object containing two main sections: `personalDa
 
 - **status**: Always `"success"`.
 - **message**: A success message as provided by the Flask service.
-
----
 
 ### Error Responses
 
@@ -158,7 +179,7 @@ If the call to the Flask service fails and returns an error response:
 
 #### 3. Internal Server Error
 
-For unexpected errors that occur during processing:
+For unexpected errors during processing:
 
 **HTTP Status:** 500 Internal Server Error
 
@@ -180,7 +201,7 @@ For unexpected errors that occur during processing:
 ## Example cURL Request
 
 ```bash
-curl -X POST http://localhost:8080/api/process-xml \
+curl -X POST https://weexpert-optima-production.up.railway.app/api/process-xml \
   -H "Content-Type: application/json" \
   -d '{
     "personalData": {
@@ -204,12 +225,6 @@ curl -X POST http://localhost:8080/api/process-xml \
 ---
 
 ## Additional Notes
-
-- **XML Service Integration:**  
-  The API uses an internal `XmlService` to process and convert data to XML format before sending it to the Flask service.
-
-- **Flask Service Endpoint:**  
-  Ensure that the Flask service is running on `http://localhost:5000/upload-xml` to successfully complete the XML upload process.
 
 - **Error Handling:**  
   The API distinguishes between validation errors (HTTP 400), errors returned by the Flask service (HTTP 501), and general internal errors (HTTP 500).
