@@ -5,7 +5,7 @@
   "main": "index.ts",
   "scripts": {
     "build": "tsc --build",
-    "start": "tsx index.ts",
+    "start": "pnpm i && tsx index.ts",
     "dev": "nodemon ./src/index.ts",
     "migration:create": "npx sequelize-cli migration:create --name",
     "migration:rollback": "env-cmd npx sequelize-cli db:migrate:undo:all --to",
