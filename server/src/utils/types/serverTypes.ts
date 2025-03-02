@@ -1,3 +1,27 @@
+import { z, ZodIssue } from 'zod';
+
+const PersonalDataSchema = z.object({
+  lastName: z.string(),
+  name: z.string(),
+  pesel: z.string().optional(),
+  salary: z.string(),
+});
+
+const ContractDataSchema = z.object({
+  title: z.string(),
+  hourlyRate: z.number().optional(),
+  date: z.string(),
+  dateOfSign: z.string(),
+  beginningOfContract: z.string(),
+  endOfContract: z.string(),
+  typeOfContract: z.string(),
+});
+
+export const RequestExpressDataSchema = z.object({
+  personalData: PersonalDataSchema,
+  contractData: ContractDataSchema,
+});
+
 // FLASK RESPONSE TYPES
 type SuccessFlaskResponse = {
   status: 'success';
@@ -5,7 +29,7 @@ type SuccessFlaskResponse = {
   filePath: string;
 };
 
-type ErrorCodes = 'OPTIMA_ERR' | 'FLASK_ERR';
+type ErrorCodes = 'OPTIMA_ERR' | 'FLASK_ERR' | 'EXPRESS_ERR' | 'VALIDATION_ERR';
 
 type ErrorFlaskResponse = {
   status: 'error';
@@ -16,28 +40,7 @@ type ErrorFlaskResponse = {
 };
 export type FlaskResponse = SuccessFlaskResponse | ErrorFlaskResponse;
 
-// REQUEST EXPRESS DATA TYPES
-type PersonalData = {
-  lastName: string;
-  name: string;
-  pesel?: string;
-  salary: string;
-};
-
-type ContractData = {
-  title: string;
-  hourlyRate?: number;
-  date: string;
-  dateOfSign: string;
-  beginningOfContract: string;
-  endOfContract: string;
-  typeOfContract: string;
-};
-
-export type RequestExpressData = {
-  personalData: PersonalData;
-  contractData: ContractData;
-};
+export type RequestExpressData = z.infer<typeof RequestExpressDataSchema>;
 
 // RESPONSE EXPRESS DATA TYPES
 type SuccessExpressResponse = {
@@ -50,7 +53,7 @@ type ErrorExpressResponse = {
   error: string;
   errorCode: ErrorCodes;
   downloadLink?: string;
-  details?: string;
+  details?: string | ZodIssue[];
 };
 
 export type ExpressResponse = SuccessExpressResponse | ErrorExpressResponse;
