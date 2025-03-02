@@ -1,6 +1,7 @@
 {
   "name": "app",
   "scripts": {
+    "start": "cd server && pnpm run start",
     "prettier": "npx prettier --write .",
     "preinstall": "npx only-allow pnpm",
     "install-all": "pnpm i && cd server && pnpm i && cd ../client && pnpm i && cd ../"
