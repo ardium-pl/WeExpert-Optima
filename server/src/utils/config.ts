@@ -1,3 +1,4 @@
+import "dotenv/config";
 import mysql from "mysql2/promise";
 
 export const dbConfig: mysql.ConnectionOptions = {
@@ -12,11 +13,11 @@ export const dbConfig: mysql.ConnectionOptions = {
 const NODE_ENV = process.env.NODE_ENV;
 
 const config: Record<string, string> = {
-    local: "http://localhost:8080",
-    development: "https://weexpert-chatbot-development.up.railway.app",
+    local: "http://localhost:5000",
+    development: "https://your-development-url.com",
     production: "https://your-production-url.com",
 };
 
 if(!NODE_ENV) throw new Error("NODE_ENV is not set, please check this variable");
 
-export const apiUrl = config[NODE_ENV];
+export const flaskUrl = config[NODE_ENV];

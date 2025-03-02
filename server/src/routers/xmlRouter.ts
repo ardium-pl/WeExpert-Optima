@@ -7,6 +7,7 @@ import {
     RequestExpressData,
     RequestExpressDataSchema,
 } from '../utils/types/serverTypes';
+import { flaskUrl } from '@server/utils/config';
 
 const xmlRouter: Router = express.Router();
 
@@ -27,7 +28,7 @@ xmlRouter.post('/api/process-xml', async (req: Request<RequestExpressData>, res:
     const xmlString = new XmlService().convertDataToXmlString(processedXmlData);
 
     try {
-      const response = await axios.post<FlaskResponse>(`http://localhost:5000/upload-xml`, {
+      const response = await axios.post<FlaskResponse>(`${flaskUrl}/upload-xml`, {
         xmlString,
       });
       const flaskResponse = response.data;
@@ -36,25 +37,25 @@ xmlRouter.post('/api/process-xml', async (req: Request<RequestExpressData>, res:
           status: 'success',
           message: flaskResponse.message,
         });
-    } catch (error) {
+    } catch (error: any) {
+        const errorResponse: FlaskResponse = error.response?.data ? error.response.data : null;
+        if (errorResponse && errorResponse.status === 'error') {
+          return res.status(501).json({
+            status: 'error',
+            error: errorResponse.error,
+            downloadLink: errorResponse.downloadLink,
+            details: errorResponse.details,
+            errorCode: errorResponse.errorCode,
+          });
+        }
       return res.status(500).json({
         status: 'error',
-        error: 'Internal server error',
+        error: 'Flask connection server error',
         errorCode: 'FLASK_ERR',
       });
     }
 
   } catch (error: any) {
-    const errorResponse: FlaskResponse = error.response?.data ? error.response.data : null;
-    if (errorResponse && errorResponse.status === 'error') {
-      return res.status(501).json({
-        status: 'error',
-        error: errorResponse.error,
-        downloadLink: errorResponse.downloadLink,
-        details: errorResponse.details,
-        errorCode: errorResponse.errorCode,
-      });
-    }
     return res.status(500).json({ status: 'error', error: 'Internal server error', errorCode: 'EXPRESS_ERR' });
   }
 });
