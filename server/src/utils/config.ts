@@ -14,7 +14,7 @@ const NODE_ENV = process.env.NODE_ENV;
 
 const config: Record<string, string> = {
     local: "http://localhost:5000",
-    development: "https://your-development-url.com",
+    development: "http://100.92.166.118:5000",
     production: "https://your-production-url.com",
 };
 
