@@ -1,14 +1,15 @@
 # Use Node.js Alpine base image
 FROM node:18-alpine
 
-# Install necessary dependencies
-RUN apk add --no-cache iptables openrc curl unzip
+# Install required dependencies
+RUN apk add --no-cache iptables openrc curl
 
 # Set working directory
 WORKDIR /app
 
-# Download and install Tailscale (latest static binary)
-RUN curl -fsSL https://pkgs.tailscale.com/stable/tailscale.tgz -o /tmp/tailscale.tgz && \
+# Fetch the latest Tailscale version dynamically and install it
+RUN TS_VERSION=$(curl -fsSL https://api.github.com/repos/tailscale/tailscale/releases/latest | grep '"tag_name":' | cut -d '"' -f 4 | sed 's/v//') && \
+    curl -fsSL "https://pkgs.tailscale.com/stable/tailscale-${TS_VERSION}-linux-amd64.tgz" -o /tmp/tailscale.tgz && \
     tar xzf /tmp/tailscale.tgz -C /usr/local/bin --strip-components=1 && \
     rm /tmp/tailscale.tgz
 
