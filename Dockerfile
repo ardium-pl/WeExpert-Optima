@@ -1,22 +1,24 @@
 # Use Node.js Alpine base image
 FROM node:18-alpine
 
-# Install required dependencies
-RUN apk add --no-cache iptables openrc curl && \
-    curl -fsSL https://pkgs.tailscale.com/stable/alpine/repo.aarch64/apk.key -o /etc/apk/keys/tailscale.pub && \
-    echo "https://pkgs.tailscale.com/stable/alpine/repo.aarch64" >> /etc/apk/repositories && \
-    apk add --no-cache tailscale
+# Install necessary dependencies
+RUN apk add --no-cache iptables openrc curl unzip
 
-# Set the working directory
+# Set working directory
 WORKDIR /app
 
-# Copy package.json and pnpm-lock.yaml for dependency installation
+# Download and install Tailscale (latest static binary)
+RUN curl -fsSL https://pkgs.tailscale.com/stable/tailscale.tgz -o /tmp/tailscale.tgz && \
+    tar xzf /tmp/tailscale.tgz -C /usr/local/bin --strip-components=1 && \
+    rm /tmp/tailscale.tgz
+
+# Copy package.json and pnpm-lock.yaml
 COPY package.json pnpm-lock.yaml ./
 
 # Install PNPM
 RUN npm install -g pnpm
 
-# Install dependencies
+# Install project dependencies
 RUN pnpm install --frozen-lockfile
 
 # Copy application files
@@ -26,4 +28,4 @@ COPY . .
 EXPOSE 8080
 
 # Start Tailscale and the Node.js app
-CMD sh -c "tailscaled & sleep 3 && tailscale up --authkey=${TS_AUTHKEY} --accept-routes && pnpm run start"
+CMD sh -c "/usr/local/bin/tailscaled & sleep 3 && /usr/local/bin/tailscale up --authkey=${TS_AUTHKEY} --accept-routes && pnpm run start"
