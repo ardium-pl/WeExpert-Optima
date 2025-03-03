@@ -20,7 +20,7 @@ RUN apk update && \
     nodejs \
     npm \
     && rm -rf /var/cache/apk/*
-    
+
 RUN mkdir -p /var/run/tailscale /var/cache/tailscale /var/lib/tailscale
 # Install pnpm
 RUN npm install -g pnpm
@@ -39,6 +39,6 @@ COPY . .
 
 # Expose Railway's required port (8080)
 EXPOSE 8080
-RUN chmod +x /tailscale.d/start.sh
 
-CMD ["./start.sh && pnpm run start"]
+# Start Tailscale and the Node.js app
+CMD sh -c "/tailscale.d/start.sh & pnpm run start"
