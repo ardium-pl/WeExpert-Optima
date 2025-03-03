@@ -1,24 +1,30 @@
-# Use Node.js Alpine base image
-FROM node:18-alpine
+FROM alpine:3.18.3
 
-# Install required dependencies
-RUN apk add --no-cache iptables openrc curl
+# Setup tailscale
+WORKDIR /tailscale.d
 
-# Set working directory
-WORKDIR /app
+COPY start.sh /tailscale.d/start.sh
 
-# Install Tailscale (official way for containers)
-RUN curl -fsSL https://pkgs.tailscale.com/stable/tailscale-latest.tgz -o /tmp/tailscale.tgz && \
-    tar xzf /tmp/tailscale.tgz -C /usr/local/bin --strip-components=1 && \
-    rm /tmp/tailscale.tgz
+ENV TAILSCALE_VERSION "latest"
+ENV TAILSCALE_HOSTNAME "railway-app"
+ENV TAILSCALE_ADDITIONAL_ARGS ""
 
-# Copy package.json and pnpm-lock.yaml
-COPY package.json pnpm-lock.yaml ./
+RUN wget https://pkgs.tailscale.com/stable/tailscale_${TAILSCALE_VERSION}_amd64.tgz && \
+  tar xzf tailscale_${TAILSCALE_VERSION}_amd64.tgz --strip-components=1
 
-# Install PNPM
+RUN apk update && apk add ca-certificates iptables ip6tables && rm -rf /var/cache/apk/*
+
+RUN mkdir -p /var/run/tailscale /var/cache/tailscale /var/lib/tailscale
+# Install pnpm
 RUN npm install -g pnpm
 
-# Install project dependencies
+# Set up Node.js application
+WORKDIR /app
+
+# Copy package.json and lock file
+COPY package.json pnpm-lock.yaml ./
+
+# Install dependencies
 RUN pnpm install --frozen-lockfile
 
 # Copy application files
@@ -26,6 +32,6 @@ COPY . .
 
 # Expose Railway's required port (8080)
 EXPOSE 8080
+RUN chmod +x /tailscale.d/start.sh
 
-# Start Tailscale in the background, then start Node.js
-CMD sh -c "/usr/local/bin/tailscaled --state=/var/lib/tailscale/tailscaled.state --socket=/var/run/tailscale/tailscaled.sock --tun=userspace-networking & sleep 3 && /usr/local/bin/tailscale up --authkey=${TS_AUTHKEY} --accept-routes --hostname=railway-container && pnpm run start"
+CMD ["./start.sh && pnpm run start"]
