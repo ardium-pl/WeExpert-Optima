@@ -1,28 +1,28 @@
-# Use Node.js base image with Alpine
+# Use Node.js Alpine base image
 FROM node:18-alpine
 
 # Install required dependencies
-RUN apk add --no-cache iptables openrc && \
-    wget -qO /etc/apk/keys/ts.key https://pkgs.tailscale.com/stable/alpine/ts.key && \
-    echo "https://pkgs.tailscale.com/stable/alpine" >> /etc/apk/repositories && \
+RUN apk add --no-cache iptables openrc curl && \
+    curl -fsSL https://pkgs.tailscale.com/stable/alpine/repo.aarch64/apk.key -o /etc/apk/keys/tailscale.pub && \
+    echo "https://pkgs.tailscale.com/stable/alpine/repo.aarch64" >> /etc/apk/repositories && \
     apk add --no-cache tailscale
 
 # Set the working directory
 WORKDIR /app
 
-# Copy package.json and pnpm-lock.yaml to install dependencies
+# Copy package.json and pnpm-lock.yaml for dependency installation
 COPY package.json pnpm-lock.yaml ./
 
 # Install PNPM
 RUN npm install -g pnpm
 
-# Install project dependencies
+# Install dependencies
 RUN pnpm install --frozen-lockfile
 
 # Copy application files
 COPY . .
 
-# Expose the port Railway expects (8080)
+# Expose Railway's required port (8080)
 EXPOSE 8080
 
 # Start Tailscale and the Node.js app
