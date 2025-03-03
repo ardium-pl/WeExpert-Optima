@@ -2,7 +2,7 @@
 FROM debian:latest
 
 # Install necessary dependencies
-RUN apt-get update && apt-get install -y curl sudo nodejs npm && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y curl sudo nodejs npm iproute2 && rm -rf /var/lib/apt/lists/*
 
 # Install PNPM globally
 RUN npm install -g pnpm
@@ -25,5 +25,5 @@ EXPOSE 8080
 # Install Tailscale
 RUN curl -fsSL https://tailscale.com/install.sh | sh
 
-# Start Tailscale and then the Node.js app
-CMD sh -c "sudo tailscale up --auth-key=tskey-auth-kLdC3nCpfy11CNTRL-LEycaSUsMAa7hXrPZp4ABam7zF85hFsp8 && pnpm run start"
+# Ensure Tailscale daemon starts properly and runs the app
+CMD sh -c "nohup tailscaled --tun=userspace-networking --socks5-server=localhost:1055 & sleep 5 && sudo tailscale up --auth-key=tskey-auth-kLdC3nCpfy11CNTRL-LEycaSUsMAa7hXrPZp4ABam7zF85hFsp8 --accept-routes=true && pnpm run start"
