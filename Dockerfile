@@ -40,5 +40,6 @@ COPY . .
 # Expose Railway's required port (8080)
 EXPOSE 8080
 
+RUN chmod +x /tailscale.d/start.sh
 # Start Tailscale and the Node.js app
-CMD sh -c "/tailscale.d/start.sh & pnpm run start"
+CMD sh -c "pnpm run start"
