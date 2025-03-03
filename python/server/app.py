@@ -24,7 +24,6 @@ async def upload_xml():
             f.flush()
             os.fsync(f.fileno())
 
-        # Czekamy na zakończenie `robotLaunch`, aby przechwycić błędy
         try:
             result = await robotLaunch(file_path)
         except Exception as e:
@@ -39,7 +38,7 @@ async def upload_xml():
         return jsonify({
             "status": "success",
             "message": "Plik XML zapisany poprawnie",
-            "robotOutput": result
+            "robotOutput": "result"
         }), 201
 
     except Exception as e:

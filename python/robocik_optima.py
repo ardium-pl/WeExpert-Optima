@@ -15,7 +15,7 @@ except Exception as e:
     print(f" Nie udało się uruchomić aplikacji: {e}")
 
 # Czekanie na pojawienie się okna głównego
-time.sleep(10) 
+time.sleep(20) 
 
 print(" Próbuję połączyć się z oknem Comarch ERP Optima...")
 

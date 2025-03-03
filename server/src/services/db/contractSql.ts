@@ -1,5 +1,5 @@
 import { logger } from "@server/utils/logger";
-import { ImportRowId } from "@server/utils/types/optimaTypes";
+import { CDATA, ImportRowId } from "@server/utils/types/optimaTypes";
 import mysql, { Connection, ConnectionOptions } from "mysql2/promise";
 
 export class ContractSql {
@@ -22,7 +22,7 @@ export class ContractSql {
             connection = await mysql.createConnection(this.dbConfig);
             return connection;
         } catch (error) {
-            logger.error("❌ Błąd podczas łączenia z bazą danych:", error);
+            logger.error(" Błąd podczas łączenia z bazą danych:", error);
             if (connection) {
                 await connection.end();
             }
@@ -30,7 +30,7 @@ export class ContractSql {
         }
     }
 
-    // Metoda sprawdzająca, czy dokument istnieje w tabeli DokDefinicje
+    // Metoda wyciągająca umw irid
     public async extractUmwIrid(
         documentDefinition: string
     ): Promise< ImportRowId | null> {

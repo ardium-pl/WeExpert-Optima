@@ -4,6 +4,8 @@ import cors from 'cors';
 import express from 'express';
 import xmlRouter from './src/routers/xmlRouter';
 import { logger } from '@server/utils/logger';
+import 'dotenv/config';
+
 
 const PORT = process.env.PORT ?? 8080;
 

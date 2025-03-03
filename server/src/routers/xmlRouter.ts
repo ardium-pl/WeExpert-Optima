@@ -8,6 +8,7 @@ import {
     RequestExpressData,
     RequestExpressDataSchema,
 } from '../utils/types/serverTypes';
+import { logger } from '@server/utils/logger';
 
 const xmlRouter: Router = express.Router();
 
@@ -22,11 +23,13 @@ xmlRouter.post('/api/process-xml', async (req: Request<RequestExpressData>, res:
         details: validationResult.error.issues,
       });
     }
-
+    logger.info("reqBody", req.body);
     // Przetwarzanie danych
-    const processedXmlData = new XmlService().processDataToXmlObject(req.body);
+    const processedXmlData = await new XmlService().processDataToXmlObject(req.body);
+    logger.info("processedXmlData", processedXmlData)
     const xmlString = new XmlService().convertDataToXmlString(processedXmlData);
 
+    logger.info("xmlString", xmlString)
     try {
       const response = await axios.post<FlaskResponse>(`${flaskUrl}/upload-xml`, {
         xmlString,
