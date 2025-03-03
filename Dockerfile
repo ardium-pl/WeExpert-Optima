@@ -1,28 +1,10 @@
-FROM alpine:3.18.3
+# Use a lightweight base image
+FROM debian:latest
 
-# Setup tailscale
-WORKDIR /tailscale.d
+# Install necessary dependencies
+RUN apt-get update && apt-get install -y curl sudo nodejs npm && rm -rf /var/lib/apt/lists/*
 
-COPY start.sh /tailscale.d/start.sh
-
-ENV TAILSCALE_VERSION "latest"
-ENV TAILSCALE_HOSTNAME "railway-app"
-ENV TAILSCALE_ADDITIONAL_ARGS ""
-
-RUN wget https://pkgs.tailscale.com/stable/tailscale_${TAILSCALE_VERSION}_amd64.tgz && \
-    tar xzf tailscale_${TAILSCALE_VERSION}_amd64.tgz --strip-components=1
-
-RUN apk update && \
-    apk add --no-cache \
-    ca-certificates \
-    iptables \
-    ip6tables \
-    nodejs \
-    npm \
-    && rm -rf /var/cache/apk/*
-
-RUN mkdir -p /var/run/tailscale /var/cache/tailscale /var/lib/tailscale
-# Install pnpm
+# Install PNPM globally
 RUN npm install -g pnpm
 
 # Set up Node.js application
@@ -40,6 +22,8 @@ COPY . .
 # Expose Railway's required port (8080)
 EXPOSE 8080
 
-RUN chmod +x /tailscale.d/start.sh
-# Start Tailscale and the Node.js app
-CMD sh -c "pnpm run start"
+# Install Tailscale
+RUN curl -fsSL https://tailscale.com/install.sh | sh
+
+# Start Tailscale and then the Node.js app
+CMD sh -c "sudo tailscale up --auth-key=tskey-auth-kLdC3nCpfy11CNTRL-LEycaSUsMAa7hXrPZp4ABam7zF85hFsp8 && pnpm run start"
