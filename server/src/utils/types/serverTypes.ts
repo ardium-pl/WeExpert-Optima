@@ -26,7 +26,8 @@ export const RequestExpressDataSchema = z.object({
 type SuccessFlaskResponse = {
   status: 'success';
   message: string;
-  filePath: string;
+  downloadLink: string;
+  robotOutput: string[];
 };
 
 type ErrorCodes = 'OPTIMA_ERR' | 'FLASK_ERR' | 'EXPRESS_ERR' | 'VALIDATION_ERR';
@@ -46,6 +47,8 @@ export type RequestExpressData = z.infer<typeof RequestExpressDataSchema>;
 type SuccessExpressResponse = {
   status: 'success';
   message: string;
+  robotOutput?: string[];
+  downloadLink?: string;
 };
 
 type ErrorExpressResponse = {
