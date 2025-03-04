@@ -30,28 +30,30 @@ async def upload_xml():
         try:
             result = await robotLaunch(LATEST_FILE_PATH)
         except Exception as e:
-            error_link = f"{request.host_url}download-xml/latest.xml"
+            xmlLink = f"{request.host_url}download-xml/latest.xml"
             return jsonify({
                 "status": "error",
                 "errorCode": "OPTIMA_ERR",
                 "details": str(e),
                 "message": "Błąd podczas przetwarzania XML. Możesz pobrać plik i sprawdzić zawartość.",
-                "downloadLink": error_link
+                "downloadLink": xmlLink
             }), 500
 
+        
         return jsonify({
             "status": "success",
             "message": "Plik XML zapisany i nadpisany poprawnie",
-            "robotOutput": result
+            "robotOutput": result,
+            "downloadLink": xmlLink
         }), 201
 
     except Exception as e:
-        error_link = f"{request.host_url}download-xml/latest.xml"
+        xmlLink = f"{request.host_url}download-xml/latest.xml"
         return jsonify({
             "error": "Wystąpił nieoczekiwany błąd.",
             "details": str(e),
             "message": "Możesz pobrać plik XML i sprawdzić jego zawartość.",
-            "downloadLink": error_link
+            "downloadLink": xmlLink
         }), 500
 
 @app.route('/download-xml/<filename>', methods=['GET'])
