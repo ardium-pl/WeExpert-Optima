@@ -44,10 +44,6 @@ async def upload_xml():
 
     except Exception as e:
         return jsonify({"error": "Wystąpił nieoczekiwany błąd.", "details": str(e)}), 500
-@app.route('/health-check', methods=['GET'])
-def health_check():
-    return jsonify({"status": "ok"}), 200
-
 @app.route('/download-xml/<filename>', methods=['GET'])
 def download_xml(filename):
     try:
