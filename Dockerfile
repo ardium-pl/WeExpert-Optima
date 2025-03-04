@@ -26,4 +26,4 @@ EXPOSE 8080
 RUN curl -fsSL https://tailscale.com/install.sh | sh
 
 # Ensure Tailscale daemon starts properly and runs the app
-CMD sh -c "nohup tailscaled --tun=userspace-networking --socks5-server=localhost:1055 & sleep 5 && sudo tailscale up --auth-key=${TS_AUTHKEY} --hostname=${TAILSCALE_HOSTNAME} --advertise-exit-node && pnpm run start"
+CMD sh -c "nohup tailscaled --tun=userspace-networking --socks5-server=localhost:1055 & sleep 5 && sudo tailscale up --auth-key=${TS_AUTHKEY} --hostname=${TAILSCALE_HOSTNAME} --advertise-exit-node && && tailscale status && pnpm run start"
