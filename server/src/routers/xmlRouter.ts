@@ -40,6 +40,8 @@ xmlRouter.post('/api/process-xml', async (req: Request<RequestExpressData>, res:
         return res.status(200).json({
           status: 'success',
           message: flaskResponse.message,
+          downloadLink: flaskResponse.downloadLink,
+          robotOutput: flaskResponse.robotOutput,
         });
     } catch (error: any) {
         const errorResponse: FlaskResponse = error.response?.data ? error.response.data : null;
