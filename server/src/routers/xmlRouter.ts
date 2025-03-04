@@ -35,7 +35,7 @@ xmlRouter.post('/api/process-xml', async (req: Request<RequestExpressData>, res:
       const response = await axios.post<FlaskResponse>(`${flaskUrl}/upload-xml`, {
         xmlString,
       },
-      {family: 4});
+      { timeout: 20000, family: 4 });
       const flaskResponse = response.data;
       if (flaskResponse.status === 'success')
         return res.status(200).json({
