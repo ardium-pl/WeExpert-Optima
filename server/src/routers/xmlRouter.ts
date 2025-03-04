@@ -32,12 +32,10 @@ xmlRouter.post('/api/process-xml', async (req: Request<RequestExpressData>, res:
     logger.info("xmlString", xmlString)
     try {
       logger.info("flaskUrl", flaskUrl);
-      axios.get(`${flaskUrl}/health-check`)
-      .then(response => console.log("Flask is reachable:", response.data))
-      .catch(error => console.error("Flask connection error:", error.message));
       const response = await axios.post<FlaskResponse>(`${flaskUrl}/upload-xml`, {
         xmlString,
-      });
+      },
+      {family: 4});
       const flaskResponse = response.data;
       if (flaskResponse.status === 'success')
         return res.status(200).json({
