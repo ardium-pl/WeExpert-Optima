@@ -19,7 +19,7 @@ async def upload_xml():
     try:
         data = request.get_json()
         if not data or "xmlString" not in data:
-            return jsonify({"error": "Brak danych wejściowych"}), 400
+            return jsonify({"status": "error", "error": "Brak danych wejściowych"}), 400
 
         # 🔹 Nadpisujemy plik latest.xml w katalogu SAVE_DIR
         with open(LATEST_FILE_PATH, "w", encoding="utf-8") as f:
@@ -50,6 +50,7 @@ async def upload_xml():
     except Exception as e:
         xmlLink = f"{request.host_url}download-xml/latest.xml"
         return jsonify({
+            "status": "error",
             "error": "Wystąpił nieoczekiwany błąd.",
             "details": str(e),
             "message": "Możesz pobrać plik XML i sprawdzić jego zawartość.",
@@ -61,7 +62,7 @@ def download_xml(filename):
 
     try:
         if not os.path.isfile(LATEST_FILE_PATH):
-            return jsonify({"error": "Plik nie istnieje"}), 404
+            return jsonify({"status": "error", "error": "Plik nie istnieje"}), 404
 
         with open(LATEST_FILE_PATH, "r", encoding="utf-8") as f:
             xml_content = f.read()
@@ -70,7 +71,7 @@ def download_xml(filename):
 
     except Exception as e:
         error_link = f"{request.host_url}download-xml/latest.xml"
-        return jsonify({"error": "Błąd pobierania pliku", "details": str(e), "downloadLink": error_link}), 500
+        return jsonify({"status": "error","error": "Błąd pobierania pliku", "details": str(e), "downloadLink": error_link}), 500
 
 if __name__ == '__main__':
     print(f"🔥 Flask server running on http://127.0.0.1:5000")

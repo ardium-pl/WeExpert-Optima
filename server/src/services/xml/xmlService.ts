@@ -75,7 +75,7 @@ export class XmlService {
                     PRE_WYMIAR_ETATM: 1,
                     PRE_STAWKA_ZASZEREGOWANIA: parseInt(personalData.salary),
                     PRE_STAWKA_ZASZEREGOWANIA_WYMIAR: 1,
-                    PRE_STAWKA_ZASZEREGOWANIA_MINIMALNA: 'Nie',
+                    PRE_STAWKA_ZASZEREGOWANIA_MINIMALNA: 'Tak',
                     PRE_KOSZTY_MNOZNIK: 1, // Ensures that the required field is not NULL
                     PRE_DATA_ZATRUDNIENIA: createCDATA(contractData.dateOfSign),
                     PRE_DATA_ZWOLNIENIA: createCDATA('2999-12-31'),
