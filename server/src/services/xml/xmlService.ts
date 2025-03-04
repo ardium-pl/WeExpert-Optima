@@ -26,15 +26,26 @@ export class XmlService {
 
     const { personalData, contractData } = processedXmlData;
 
-    
-    const umwIridData = await this.contractSql.extractUmwIrid(contractData.typeOfContract);
-    const umwIrid = umwIridData?.importRowId ?? 'DEFAULT_ID'; // 🔹 Ustaw domyślną wartość
-    const umwIrid2 = umwIridData?.importRowId2 ?? 'DEFAULT_ID_2'; // 🔹 Ustaw domyślną wartość
-
-    const twpIridData = await this.contractSql.extractUmwTwpIrid(contractData.title)
-    const twpIrid = twpIridData?.importRowId ?? 'DEFAULT_ID'
-    const twpIrid2 = umwIridData?.importRowId2 ?? 'DEFAULT_ID_2'
-
+    const createAkronim = (personalData: RequestExpressData["personalData"]): string => {
+      if (!personalData.name || !personalData.lastName) {
+          return "Brak danych";
+      }
+  
+      const firstPart = personalData.name.substring(0, 2).toUpperCase();
+      const secondPart = personalData.lastName.substring(0, 2).toUpperCase();
+  
+      return firstPart + secondPart;
+  };
+  const akronim = createAkronim(personalData);
+  
+  const umwIridData = await this.contractSql.extractUmwIrid(contractData.typeOfContract);
+  const umwIrid = umwIridData?.importRowId ?? 'C4C04EB0-08D9-4BA1-A851-4C3177D6F88C'; 
+  const umwIrid2 = umwIridData?.importRowId2 ?? '88C77785-2899-406B-A3CC-E096C6317C8C'; 
+  
+  const twpIridData = await this.contractSql.extractUmwTwpIrid(contractData.title)
+  const twpIrid = twpIridData?.importRowId ?? '49CC4337-27B9-4618-83EF-4679F26D6DF6'
+  const twpIrid2 = twpIridData?.importRowId2 ?? '95C5217A-DFF4-461F-9255-649A17D2CD0C'
+  
     const xmlReadyData: PRACOWNICY_EXT = {
       ROOT: {
         _attributes: {
@@ -47,25 +58,25 @@ export class XmlService {
           PRACOWNIK: [
             {
               PRA_IRID: createCDATA(this._generateIRID()), 
-              PRA_KOD: createCDATA('IMP10'),
+              PRA_KOD: createCDATA(akronim),
               PRA_ARCHIWALNY: 'Nie',
               PRA_NADRZEDNY: 'Nie',
               PRACOWNIK_EXT_ETATY: {
                 PRACOWNIK_EXT_ETAT: [
                   {
                     PRE_IRID: createCDATA(this._generateIRID()),
-                    PRE_DATA_OD: createCDATA(contractData.beginningOfContract),
-                    PRE_DATA_DO: createCDATA(contractData.endOfContract),
+                    PRE_DATA_OD: createCDATA("1900-01-01"),
+                    PRE_DATA_DO: createCDATA("2999-12-31"),
                     PRE_KAL_IRID: createCDATA("B88A311C-E650-413E-BFF9-5A40C54E21D1"),
-                    PRE_AKRONIM: createCDATA('IMP10'),
+                    PRE_AKRONIM: createCDATA(akronim),
                     PRE_NAZWISKO: createCDATA(personalData.lastName),
                     PRE_IMIE_1: createCDATA(personalData.name),
                     PRE_KOSZTY_MNOZNIK: 1, // Ensures that the required field is not NULL
-                    PRE_DATA_ZATRUDNIENIA: createCDATA('2025-01-02'),
+                    PRE_DATA_ZATRUDNIENIA: createCDATA(contractData.dateOfSign),
                     PRE_DATA_ZWOLNIENIA: createCDATA('2999-12-31'),
                     PRE_ETAT_DATA_ZAWARCIA_UMOWY: createCDATA(contractData.dateOfSign),
                     PRE_ETAT_DATA_ROZPOCZECIA_PRACY: createCDATA(contractData.beginningOfContract),
-                    PRE_ETAT_RODZAJ_UMOWY: createCDATA('dupa'),
+                    PRE_ETAT_RODZAJ_UMOWY: createCDATA('na czas nieokreślony'),
                     PRE_KOD_TYT_UBEZPIECZENIA: 99999, // musi zostać
                     PRE_PRM_ODDELEGOWANY_WALUTA: createCDATA(' '), // musi zostać
                   },
@@ -87,8 +98,8 @@ export class XmlService {
                     UMW_DATA_DO: createCDATA(contractData.endOfContract),
                     UMW_DATA_ZAWARCIA: createCDATA(contractData.dateOfSign),
                     UMW_TYTUL: createCDATA(contractData.title),
-                    UMW_WARTOSC: createCDATA(' '),
-                    UMW_RODZAJ: createCDATA(' '),
+                    UMW_WARTOSC: createCDATA('0'), // ważne pole musi coś w nim być, pusta wartość zwraca błąd
+                    UMW_RODZAJ: createCDATA('PIT-8B  6.Umowa o dzieło 20% '),
                     UMW_SPLACONO: 0,
                     UMW_BRUTTO: 0,
                   },
@@ -99,7 +110,7 @@ export class XmlService {
                   {
                     PRI_IRID: createCDATA(this._generateIRID()),
                     PRI_RODZAJ: 1,
-                    PRI_AKRONIM: createCDATA(' IMP 7 '),
+                    PRI_AKRONIM: createCDATA(akronim),
                     PRI_IMIE_1: createCDATA(personalData.name),
                     PRI_NAZWISKO: createCDATA(personalData.lastName),
                     PRI_PESEL: personalData.pesel
