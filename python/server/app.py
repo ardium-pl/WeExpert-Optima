@@ -15,6 +15,7 @@ app = Flask(__name__)
 
 @app.route('/upload-xml', methods=['POST'])
 async def upload_xml():
+    print("Próba przesłania pliku XML")
     try:
         data = request.get_json()
         if not data or "xmlString" not in data:
@@ -53,8 +54,9 @@ async def upload_xml():
             "downloadLink": error_link
         }), 500
 
-@app.route('/download-xml/latest.xml', methods=['GET'])
-def download_xml():
+@app.route('/download-xml/<filename>', methods=['GET'])
+def download_xml(filename):
+
     try:
         if not os.path.isfile(LATEST_FILE_PATH):
             return jsonify({"error": "Plik nie istnieje"}), 404
