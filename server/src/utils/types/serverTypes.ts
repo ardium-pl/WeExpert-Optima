@@ -4,12 +4,12 @@ const PersonalDataSchema = z.object({
   lastName: z.string(),
   name: z.string(),
   pesel: z.string().optional(),
-  salary: z.string(),
 });
 
 const ContractDataSchema = z.object({
   title: z.string(),
   hourlyRate: z.number().optional(),
+  salary: z.number().optional(),
   date: z.string(),
   dateOfSign: z.string(),
   beginningOfContract: z.string(),

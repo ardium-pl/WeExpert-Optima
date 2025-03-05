@@ -44,11 +44,12 @@ The request body must be a JSON object containing two main sections: `personalDa
     "lastName": "string",
     "name": "string",
     "pesel": "string",
-    "salary": "string"
   },
   "contractData": {
     "title": "string",
     "hourlyRate": "number",
+    "salary": "number",
+    "fullTimeEquivalent": "number",
     "date": "YYYY-MM-DD",
     "dateOfSign": "YYYY-MM-DD",
     "beginningOfContract": "YYYY-MM-DD",
@@ -64,11 +65,12 @@ The request body must be a JSON object containing two main sections: `personalDa
 - **lastName**: A required string.
 - **name**: A required string.
 - **pesel**: An optional string.
-- **salary**: A required string.
 
 ### contractData
 - **title**: A required string.
 - **hourlyRate**: An optional number.
+- **salary**: An optional number.
+- **fullTimeEquivalent**: A required number.
 - **date**: A required string in the format `YYYY-MM-DD`.
 - **dateOfSign**: A required string in the format `YYYY-MM-DD`.
 - **beginningOfContract**: A required string in the format `YYYY-MM-DD`.
@@ -113,12 +115,15 @@ The request body must be a JSON object containing two main sections: `personalDa
 ```json
 {
   "status": "success",
-  "message": "The message returned by the Flask service"
+  "message": "The message returned by the Flask service",
+  "downloadLink": "Link to eventually download the file."
 }
 ```
 
 - **status**: Always `"success"`.
 - **message**: A success message as provided by the Flask service.
+- **downloadLink**: Link to eventually download the file.
+
 
 ### Error Responses
 
@@ -195,16 +200,16 @@ curl -X POST https://weexpert-optima-production.up.railway.app/api/process-xml \
       "lastName": "Doe",
       "name": "John",
       "pesel": "12345678901",
-      "salary": "5000"
     },
     "contractData": {
-      "title": "Employment Contract",
-      "hourlyRate": 50,
+      "title": "PIT-8A Inne należności",
+      "salary": "5000",
+      "fullTimeEquivalent": 0.5
       "date": "2025-01-01",
       "dateOfSign": "2025-01-05",
       "beginningOfContract": "2025-02-01",
       "endOfContract": "2025-12-31",
-      "typeOfContract": "Full-Time"
+      "typeOfContract": "Umowa"
     }
   }'
 ```

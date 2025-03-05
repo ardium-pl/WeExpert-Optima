@@ -73,9 +73,9 @@ export class XmlService {
                     PRE_IMIE_1: createCDATA(personalData.name),
                     PRE_WYMIAR_ETATL: 1,
                     PRE_WYMIAR_ETATM: 1,
-                    PRE_STAWKA_ZASZEREGOWANIA: parseInt(personalData.salary),
+                    PRE_STAWKA_ZASZEREGOWANIA: contractData.salary,
                     PRE_STAWKA_ZASZEREGOWANIA_WYMIAR: 1,
-                    PRE_STAWKA_ZASZEREGOWANIA_MINIMALNA: 'Tak',
+                    PRE_STAWKA_ZASZEREGOWANIA_MINIMALNA: 'Nie',
                     PRE_KOSZTY_MNOZNIK: 1, // Ensures that the required field is not NULL
                     PRE_DATA_ZATRUDNIENIA: createCDATA(contractData.dateOfSign),
                     PRE_DATA_ZWOLNIENIA: createCDATA('2999-12-31'),
@@ -103,7 +103,7 @@ export class XmlService {
                     UMW_DATA_DO: createCDATA(contractData.endOfContract),
                     UMW_DATA_ZAWARCIA: createCDATA(contractData.dateOfSign),
                     UMW_TYTUL: createCDATA(contractData.title),
-                    UMW_WARTOSC: createCDATA(personalData.salary), // ważne pole musi coś w nim być, pusta wartość zwraca błąd
+                    UMW_WARTOSC: createCDATA(contractData.salary ? contractData.salary.toString() : contractData.hourlyRate!.toString()), // ważne pole musi coś w nim być, pusta wartość zwraca błąd
                     UMW_RODZAJ: createCDATA('PIT-8B  6.Umowa o dzieło 20% '),
                     UMW_SPLACONO: 0,
                     UMW_BRUTTO: 5000,
