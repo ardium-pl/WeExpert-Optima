@@ -146,6 +146,27 @@ The request body must be a JSON object containing two main sections: `personalDa
 - **errorCode**: `"VALIDATION_ERR"`.
 - **details**: An array containing details of each validation issue.
 
+**Example of incorrect salary type**
+```json
+{
+    "status": "error",
+    "error": "Invalid request data. Please check the request body and try again.",
+    "errorCode": "VALIDATION_ERR",
+    "details": [
+        {
+            "code": "invalid_type",
+            "expected": "number",
+            "received": "string",
+            "path": [
+                "contractData",
+                "salary"
+            ],
+            "message": "Expected number, received string"
+        }
+    ]
+}
+```
+
 #### 2. Flask Service Error
 
 If the call to the Flask service fails and returns an error response:
