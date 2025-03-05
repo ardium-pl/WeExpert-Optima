@@ -224,7 +224,7 @@ curl -X POST https://weexpert-optima-production.up.railway.app/api/process-xml \
     },
     "contractData": {
       "title": "PIT-8A Inne należności",
-      "salary": "5000",
+      "salary": 5000,
       "fullTimeEquivalent": 0.5
       "date": "2025-01-01",
       "dateOfSign": "2025-01-05",
