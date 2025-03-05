@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ES2022",
+    "outDir": "./dist",
+    "strict": true,
+    "moduleResolution": "Node",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "emitDeclarationOnly": true,
+    "declaration": true,
+    "allowImportingTsExtensions": true,
+    "baseUrl": ".",
+    "paths": {
+      "@server/*": ["server/src/*"],
+      "@client/*": ["client/*"],
+      "@shared/*": ["shared/*"]
+    }
+  },
+  "include": [
+    "server/**/*.ts",
+    "client/**/*.ts",
+    "shared/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
